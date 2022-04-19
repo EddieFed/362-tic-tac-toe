@@ -48,10 +48,10 @@ void loop() {
         }
       }
     }
-    delay(500);
+    return;
   }
-
   else {
+    
     // Read serial to update frame first!
     if (Serial.available()) {
       char incomingByte = Serial.read();
@@ -78,17 +78,21 @@ void loop() {
       if (incomingByte == 'S') {
   
         // Make sure current highlighted spot isn't taken!
-        if ( (curr_player == 0 && b_states[curr_y][curr_x] == LOW) || (curr_player == 1 && r_states[curr_y][curr_x] == LOW) ) {
+        if (b_states[curr_y][curr_x] != HIGH && r_states[curr_y][curr_x] != HIGH) {
+
+          // Light up appropriate color
           (curr_player == 0) ? r_states[curr_y][curr_x] = HIGH : b_states[curr_y][curr_x] = HIGH;
   
           // Check winner
           if (curr_player == 0 && checkWin(r_states)) {
             Serial.println("RED WINS");
             winner = 'R';
+            return;
           }
           else if (curr_player == 1 && checkWin(b_states)) {
             Serial.println("BLUE WINS");
             winner = 'B';
+            return;
           }
   
           // Switch player
@@ -99,14 +103,17 @@ void loop() {
           curr_y = 0; 
         }
       }
-  
-      if (incomingByte == '1') {
-        winner = 'R';
-      }
-      else if (incomingByte == '2') {
-        winner = 'B';
-      }
-      
+
+// Not needed anymore
+//      if (incomingByte == '1') {
+//        winner = 'R';
+//        return;
+//      }
+//      else if (incomingByte == '2') {
+//        winner = 'B';
+//        return;
+//      }
+//      
     }
     
     // Redraw lights every "frame"
@@ -118,7 +125,8 @@ void loop() {
         digitalWrite(B_PINS[i][j], b_states[i][j]);
       }
     }
-  
+
+    // Gives a blinking effect!
     if ((millis() - startTime) % 1000 >= 500) {
       // Now draw selection on top of the frame!
       (curr_player == 0) ? digitalWrite(R_PINS[curr_y][curr_x], HIGH) : digitalWrite(B_PINS[curr_y][curr_x], HIGH);
