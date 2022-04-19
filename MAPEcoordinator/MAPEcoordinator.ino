@@ -11,6 +11,7 @@
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
+// (RX, TX)
 SoftwareSerial s1(6, 7);  // Controller 1
 SoftwareSerial s2(8, 9);  // Controller 2
 
@@ -32,12 +33,12 @@ void loop() {
   if (curr_player == 0) {
     s1.listen();
     inByte = s1.read();
-    lcd.print("p1");
+    lcd.print("p1: ");
   }
   else {
     s2.listen();
-    inByte = s1.read();
-    lcd.print("p2");
+    inByte = s2.read();
+    lcd.print("p2: ");
   }
 
   if (inByte == 'S') {
